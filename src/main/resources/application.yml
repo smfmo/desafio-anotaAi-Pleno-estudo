@@ -1,3 +1,11 @@
 spring:
   application:
     name: desafio-anota-ai
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: product-catalog
+      username: admin
+      password: admin
+      authentication-database: admin

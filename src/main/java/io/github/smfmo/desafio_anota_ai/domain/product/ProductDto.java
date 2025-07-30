@@ -5,6 +5,6 @@ public record ProductDto(
         String description,
         Integer price,
         String categoryId,
-        String OwnerId
+        String ownerId
 ) {
 }

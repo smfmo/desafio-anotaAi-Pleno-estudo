@@ -38,9 +38,10 @@ public class ProductService {
         var product = repository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
 
-        categoryService.findById(productDto.categoryId())
-                .ifPresent(product::setCategory);
-
+        if (productDto.categoryId() != null) {
+            categoryService.findById(productDto.categoryId())
+                    .ifPresent(product::setCategory);
+        }
         if (!productDto.title().isEmpty()){
             product.setTitle(productDto.title());
         }
