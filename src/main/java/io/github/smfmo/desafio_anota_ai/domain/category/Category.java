@@ -20,7 +20,7 @@ public class Category {
 
     private String description;
 
-    private String OwnerId;
+    private String ownerId;
 
     @Override
     public String toString() {
@@ -28,8 +28,16 @@ public class Category {
         json.put("id", id);
         json.put("title", title);
         json.put("description", description);
-        json.put("OwnerId", OwnerId);
+        json.put("ownerId", ownerId);
         json.put("type", "category");
+        return json.toString();
+    }
+
+    public String deleteToString() {
+        JSONObject json = new JSONObject();
+        json.put("id", id);
+        json.put("ownerId", id);
+        json.put("type", "delete-category");
         return json.toString();
     }
 }

@@ -23,9 +23,9 @@ public class Product {
 
     private Integer price;
 
-    private String category;
+    private String categoryId;
 
-    private String OwnerId;
+    private String ownerId;
 
     @Override
     public String toString() {
@@ -34,9 +34,17 @@ public class Product {
         json.put("title", title);
         json.put("description", description);
         json.put("price", price);
-        json.put("categoryId", category);
-        json.put("OwnerId", OwnerId);
+        json.put("categoryId", categoryId);
+        json.put("ownerId", ownerId);
         json.put("type", "product");
+        return json.toString();
+    }
+
+    public String deleteToString(){
+        JSONObject json = new JSONObject();
+        json.put("id", id);
+        json.put("ownerId", ownerId);
+        json.put("type", "delete-product");
         return json.toString();
     }
 }

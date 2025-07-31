@@ -47,7 +47,7 @@ public class ProductService {
         if (productDto.categoryId() != null) {
             categoryService.findById(productDto.categoryId())
                     .orElseThrow(CategoryNotFoundException::new);
-            product.setCategory(productDto.categoryId());
+            product.setCategoryId(productDto.categoryId());
         }
         if (!productDto.title().isEmpty()){
             product.setTitle(productDto.title());
@@ -70,5 +70,6 @@ public class ProductService {
         var product = repository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
         repository.delete(product);
+        awsSnsService.publish(new MessageDto(product.deleteToString()));
     }
 }

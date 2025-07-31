@@ -56,6 +56,7 @@ public class CategoryService {
         var category = repository.findById(id)
                 .orElseThrow(CategoryNotFoundException::new);
         repository.delete(category);
+        awsSnsService.publish(new MessageDto(category.deleteToString()));
     }
 
 }
