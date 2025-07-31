@@ -20,6 +20,6 @@ public class AwsSnsService {
     }
 
     public void publish(MessageDto message){
-        snsClient.publish(catalogTopic.getTopicArn(), message.toString());
+        snsClient.publish(catalogTopic.getTopicArn(), message.message());
     }
 }

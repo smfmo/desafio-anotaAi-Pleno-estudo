@@ -5,9 +5,10 @@ import io.github.smfmo.desafio_anota_ai.domain.category.CategoryDto;
 import io.github.smfmo.desafio_anota_ai.domain.category.CategoryMapper;
 import io.github.smfmo.desafio_anota_ai.domain.category.exception.CategoryNotFoundException;
 import io.github.smfmo.desafio_anota_ai.repository.CategoryRepository;
+import io.github.smfmo.desafio_anota_ai.service.aws.AwsSnsService;
+import io.github.smfmo.desafio_anota_ai.service.aws.MessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +18,14 @@ public class CategoryService {
 
     private final CategoryRepository repository;
     private final CategoryMapper mapper;
+    private final AwsSnsService awsSnsService;
 
     public Category insert(CategoryDto categoryDto) {
-        var Entity = mapper.toEntity(categoryDto);
-        repository.save(Entity);
-        return Entity;
+        var entity = mapper.toEntity(categoryDto);
+        repository.save(entity);
+        System.out.println(entity);
+        awsSnsService.publish(new MessageDto(entity.toString()));
+        return entity;
     }
 
     public List<Category> findAll() {
@@ -41,7 +45,11 @@ public class CategoryService {
         if (!categoryDto.description().isEmpty()){
             category.setDescription(categoryDto.description());
         }
-        return repository.save(category);
+
+        repository.save(category);
+        awsSnsService.publish(new MessageDto(category.toString()));
+
+        return category;
     }
 
     public void delete(String id) {

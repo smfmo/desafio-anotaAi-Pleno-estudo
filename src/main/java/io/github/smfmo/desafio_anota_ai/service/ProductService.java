@@ -1,6 +1,5 @@
 package io.github.smfmo.desafio_anota_ai.service;
 
-import io.github.smfmo.desafio_anota_ai.domain.category.Category;
 import io.github.smfmo.desafio_anota_ai.domain.category.exception.CategoryNotFoundException;
 import io.github.smfmo.desafio_anota_ai.domain.product.Product;
 import io.github.smfmo.desafio_anota_ai.domain.product.ProductDto;
@@ -24,15 +23,15 @@ public class ProductService {
 
 
     public Product insert(ProductDto productDto) {
-        Category category = categoryService.findById(productDto.categoryId())
+        categoryService.findById(productDto.categoryId())
                 .orElseThrow(CategoryNotFoundException::new);
 
         var entity = mapper.toEntity(productDto);
-        entity.setCategory(category);
 
         repository.save(entity);
+        System.out.println(entity);
 
-        awsSnsService.publish(new MessageDto(entity.getOwnerId()));
+        awsSnsService.publish(new MessageDto(entity.toString()));
 
         return entity;
     }
@@ -47,7 +46,8 @@ public class ProductService {
 
         if (productDto.categoryId() != null) {
             categoryService.findById(productDto.categoryId())
-                    .ifPresent(product::setCategory);
+                    .orElseThrow(CategoryNotFoundException::new);
+            product.setCategory(productDto.categoryId());
         }
         if (!productDto.title().isEmpty()){
             product.setTitle(productDto.title());
@@ -61,7 +61,7 @@ public class ProductService {
 
         repository.save(product);
 
-        awsSnsService.publish(new MessageDto(product.getOwnerId()));
+        awsSnsService.publish(new MessageDto(product.toString()));
 
         return product;
     }
