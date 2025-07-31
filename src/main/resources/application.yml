@@ -9,3 +9,11 @@ spring:
       username: admin
       password: admin
       authentication-database: admin
+aws:
+  accessKeyId: ${AWS_ACCESS_KEY_ID}
+  secretKey: ${AWS_SECRET_KEY}
+  region: ${AWS_REGION}
+  sns:
+    topic:
+      catalog:
+        arn: ${AWS_SNS_ARN}

@@ -7,6 +7,8 @@ import io.github.smfmo.desafio_anota_ai.domain.product.ProductDto;
 import io.github.smfmo.desafio_anota_ai.domain.product.ProductMapper;
 import io.github.smfmo.desafio_anota_ai.domain.product.exception.ProductNotFoundException;
 import io.github.smfmo.desafio_anota_ai.repository.ProductRepository;
+import io.github.smfmo.desafio_anota_ai.service.aws.AwsSnsService;
+import io.github.smfmo.desafio_anota_ai.service.aws.MessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,16 +20,21 @@ public class ProductService {
     private final ProductRepository repository;
     private final CategoryService categoryService;
     private final ProductMapper mapper;
+    private final AwsSnsService awsSnsService;
+
 
     public Product insert(ProductDto productDto) {
         Category category = categoryService.findById(productDto.categoryId())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        var Entity = mapper.toEntity(productDto);
-        Entity.setCategory(category);
-        repository.save(Entity);
+        var entity = mapper.toEntity(productDto);
+        entity.setCategory(category);
 
-        return Entity;
+        repository.save(entity);
+
+        awsSnsService.publish(new MessageDto(entity.getOwnerId()));
+
+        return entity;
     }
 
     public List<Product> findAll() {
@@ -52,7 +59,11 @@ public class ProductService {
             product.setPrice(productDto.price());
         }
 
-        return repository.save(product);
+        repository.save(product);
+
+        awsSnsService.publish(new MessageDto(product.getOwnerId()));
+
+        return product;
     }
 
     public void delete(String id) {
